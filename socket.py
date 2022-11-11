@@ -1,31 +1,29 @@
-#!/usr/bin/env python
+import socket 
 
-import socket
+tcpsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+# socket.AF_INET -> address family 
+# socket,SOCK_STREAM -> kind of socket its tcp
 
-tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcpsocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+# this will allow to reuse ip address when server crash or exit without any reson
 
-tcpSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  
+tcpsocket.bind("0.0.0.0", 8000)
+# its and bind call thats tacks two argumets ip and port
 
-tcpSocket.bind(("0.0.0.0", 4444))
+tcpsocket.listen(2)
+# listen tackes one argumets thats number of user can connect in our case its 2
 
-tcpSocket.listen(2) 
+(client, (ip, port)) = tcpsocket.accept()
+# this contain ip and port of user thats connect with client and create new socket for diffrent diffrent users and its waiting for client
 
-print "Waiting for a client ... "
-(client, (ip, port)) = tcpSocket.accept()
+client.send("Welcome to the World of Network Security")
+# client.send -> send a welcome msg to the user
 
-print "Received connection from : ", ip
+data = client.recv(2048)
+# this recv data from the client of buufer 2048 and assign that in to datavariable
 
-print "Starting ECHO output .... "
-
-data = "dummy"
-
-while len(data) :
-    data = client.recv(2048)
-    print "Client send : ",data
-    client.send(data)
-
-print "Closing connection ..."
 client.close()
+# close client connection
 
-print "shutting down server ..."
-tcpSocket.close()
+tcpsocket.close()
+# close the server 
